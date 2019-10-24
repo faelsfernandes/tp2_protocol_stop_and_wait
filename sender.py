@@ -24,7 +24,7 @@ while True:
             acknowledged = True
             print("AKNOWLODGED!")
         except socket.timeout:
-            print("TIME OUT!")  
+            print("TIME OUT!")
             my_socket.sendto(bytes(frame, 'utf-8'), dest)
             acknowledged = False
         acknowledged = False
