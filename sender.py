@@ -22,7 +22,7 @@ def frames_divider(msg, n):
 
 def change_bit(msg):
     return msg.replace(msg[0], random.choice(string.ascii_letters))
-    
+
 
 def gen_hash(msg):
     hash_object = hashlib.md5(msg.encode())
@@ -48,6 +48,7 @@ def main():
                 hash_frame = gen_hash(str(frame))
                 my_socket.sendto(bytes(aux_frame, 'utf-8'), dest)
                 my_socket.sendto(bytes(hash_frame, 'utf-8'), dest)
+
             else:
                 hash_frame = gen_hash(str(frame))
                 my_socket.sendto(bytes(frame, 'utf-8'), dest)
@@ -56,20 +57,26 @@ def main():
 
             while True:
                 try:
-                    ACK = my_socket.recvfrom(1024)
-                    acknowledged = True
-                    print(str(ACK))
-                    break
+                    ACK, adress = my_socket.recvfrom(1024)
+                    if (ACK.decode('utf-8') == 'ack'):  
+                        acknowledged = True
+                        print('Sucessful! Ack was received!')
+                        print('#########')
+                        break
+                    else:
+                        print('Transmission error! Resending frame: ' + str(frame))
+                        print('#########')
                 except socket.timeout:
                     hash_frame = gen_hash(str(frame))
-                    print('Error! Resending frame: ' + str(frame))
-                    print('\n')
+                    print('Timeout! Resending frame: ' + str(frame))
+                    print('#########')
+                    # print('\n')
                     my_socket.sendto(bytes(frame, 'utf-8'), dest)
                     my_socket.sendto(bytes(hash_frame, 'utf-8'), dest)
                     acknowledged = False
                 acknowledged = False
-        print('\n')
-
+        print('New Message!')
+        
     my_socket.close()
 
 

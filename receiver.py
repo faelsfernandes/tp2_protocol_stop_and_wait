@@ -38,22 +38,27 @@ def main():
             data_hash, adress = server_socket.recvfrom(512)
             check_hash = gen_hash(str(data, 'utf-8'))
 
-            number = random.randint(0, 100)
+            timeout = random.randint(0, 100)
             if(data_hash.decode('utf-8') != check_hash):
-                print('Received \'' + str(data, 'utf-8') + '\' with error')
+                print('Received \'' + str(data, 'utf-8') + '\' with transmission error')
                 print('Received hash: ' + data_hash.decode('utf-8'))
                 print('Check hash: ' + check_hash)
-                print('\n')
-            elif(number > 30 and acknowledged == False):
-                server_socket.sendto(b'Acknowledged', adress)
-                print('Received \'' + str(data, 'utf-8') + '\' with ACK')
-                print('\n')
+                print('Sending nack')
+                print('#########')
+                # print('\n')
+                server_socket.sendto(b'nack', adress)
+            elif(timeout > 30 and acknowledged == False):
+                server_socket.sendto(b'ack', adress)
+                print('Received \'' + str(data, 'utf-8') + '\' sending ack!')
+                print('#########')
                 acknowledged = True
                 break
             else:
-                # server_socket.sendto(b'AKC', adress)
+                time.sleep(1.2)
                 print('Received \'' + str(data, 'utf-8') + '\', but could not send ACK')
-                print('\n') 
+                print('#########')
+                
+                # print('\n')     
 
 if __name__ == '__main__':
     main()
